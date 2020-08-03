@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+	   http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+	   http://www.springframework.org/schema/rabbit
+	   http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+	   http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+
+
+    <rabbit:template id="testAmqpTemplate"
+                     connection-factory="rabbitConnFactory"
+                     exchange="myExchange"
+                     routing-key="stringQueueKey"
+                     message-converter="jsonMessageConverter"/>
+
+    <rabbit:queue id="stringQueue" durable="true" auto-delete="false" exclusive="false" name="stringQueue"/>
+
+
+    <rabbit:direct-exchange name="myExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="stringQueue" key="stringQueueKey"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+
+
+
+    <bean id="rabbitConnFactory"
+          class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
+        <constructor-arg ref="rabbitConnectionFactory" />
+        <property name="channelCacheSize" value="100" />
+        <property name="executor" ref="taskExecutor" />
+        <property name="requestedHeartBeat" value="10" />
+
+    </bean>
+
+    <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+        <property name="host" value="${host}" />
+        <property name="port" value="${port}" />
+        <property name="username" value="${username}" />
+        <property name="password" value="${password}" />
+        <property name="virtualHost" value="${vhost}" />
+        <property name="connectionTimeout" value="3600000" />
+        <property name="automaticRecoveryEnabled" value="true" />
+    </bean>
+
+
+    <bean id="jsonMessageConverter"
+          class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter">
+    </bean>
+
+
+    <task:executor id="taskExecutor" pool-size="25-256" queue-capacity="128" />
+
+    <context:property-placeholder location="classpath:application.properties"/>
+
+</beans>

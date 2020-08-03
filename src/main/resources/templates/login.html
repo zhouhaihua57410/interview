@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+<h1>LOGIN</h1>
+
+用户登陆 你好啊
+<br>
+<img width="400px" height="300px" src="images/saber.jpg">
+<br>
+
+<span th:text="${hello}"></span>
+
+<br>
+<span th:text="${p.getLastName()}"></span>
+<br>
+<span th:text="${#calendars.format(p.getBirth(),'yyyy-MM-dd')}"></span>
+
+<br>
+<span th:text="${#lists.size(list)}"></span>
+<br>
+
+<table>
+    <thead>
+    <tr>
+        <td>index</td>
+        <td>Name</td>
+        <td>Age</td>
+        <td>Birth</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="person,iterstat:${list}" th:class="${iterstat.odd}?'odd':'even'">
+        <td th:text="${iterstat.index}"></td>
+        <td th:text="${person.getLastName()}"></td>
+        <td th:text="${person.getAge()}"></td>
+        <td th:text="${#calendars.format(person.getBirth(),'yyyy-MM-dd')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

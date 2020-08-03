@@ -1,0 +1,19 @@
+spring:
+  thymeleaf:
+    cache: false
+
+  # 指定配置文件
+  profiles:
+    active: dev
+
+
+person:
+  lastName: 周海华
+  age: 26
+  birth: 1993/7/6
+  maps: {key1: value1,key2: value2}
+  list: [dog,cat,horse]
+
+
+
+
